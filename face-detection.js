@@ -16,6 +16,7 @@ async function detectFaces(path) {
   // Filter data score with > 0.5
   const data = result.filter((item) => item._score > 0.5);
 
+  // Delete file after face detection
   fs.unlinkSync(path, { force: true });
 
   return data;

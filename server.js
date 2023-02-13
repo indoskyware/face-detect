@@ -21,13 +21,13 @@ app.post("/face-detection", async (req, res) => {
     }
 
     // If does not have image mime type prevent from uploading
-    if (!/^image/.test(image.mimetype)) {
-      return res.status(400).json({
-        status: false,
-        message: "Image Required!",
-        data: null,
-      });
-    }
+    // if (!/^image/.test(image.mimetype)) {
+    //   return res.status(400).json({
+    //     status: false,
+    //     message: "Image Required!",
+    //     data: null,
+    //   });
+    // }
 
     // If directory uploads not available
     fs.existsSync("upload") || fs.mkdirSync("upload");
@@ -57,7 +57,7 @@ app.post("/face-detection", async (req, res) => {
   } catch (e) {
     res.status(500).json({
       success: true,
-      message: "Internal Server Error",
+      message: `Internal Server Error: ${e}`,
       data: null,
     });
   }
