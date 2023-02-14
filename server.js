@@ -31,7 +31,7 @@ app.post("/face-detection", async (req, res) => {
     // }
 
     // If directory uploads not available
-    fs.existsSync("upload") || fs.mkdirSync("upload");
+    // fs.existsSync("upload") || fs.mkdirSync("upload");
 
     // Uploading image
     const fullPath = __dirname + "/upload/" + uuidv4() + '.jpg';
