@@ -57,7 +57,7 @@ app.post("/face-detection", async (req, res) => {
     }
   } catch (e) {
     res.status(500).json({
-      success: true,
+      success: false,
       message: `Internal Server Error: ${e}`,
       data: null,
     });
