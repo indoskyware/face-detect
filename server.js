@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const fileUpload = require("express-fileupload");
 const fs = require("fs");
+const { v4: uuidv4 } = require('uuid');
 const detectFaces = require("./face-detection");
 
 app.use(express.json());
@@ -33,7 +34,7 @@ app.post("/face-detection", async (req, res) => {
     fs.existsSync("upload") || fs.mkdirSync("upload");
 
     // Uploading image
-    const fullPath = __dirname + "/upload/" + image.name;
+    const fullPath = __dirname + "/upload/" + uuidv4() + '.jpg';
     image.mv(fullPath);
 
     // Face Detection Image
