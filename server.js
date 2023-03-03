@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const fileUpload = require("express-fileupload");
 const fs = require("fs");
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 const detectFaces = require("./face-detection");
 
 app.use(express.json());
@@ -34,13 +34,17 @@ app.post("/face-detection", async (req, res) => {
     // fs.existsSync("upload") || fs.mkdirSync("upload");
 
     // Uploading image
-    const fullPath = __dirname + "/upload/" + uuidv4() + '.jpg';
-    image.mv(fullPath);
+    const pathUpload = __dirname + "/upload/";
+    const fileName = uuidv4() + ".jpg";
+    image.mv(pathUpload + fileName);
 
     // Face Detection Image
-    const data = await detectFaces(fullPath);
+    const data = await detectFaces(pathUpload, fileName);
 
     if (data.length > 0) {
+      if (data.length > 1) {
+        image.mv(pathUpload + "errors/" + fileName);
+      }
       res.json({
         success: true,
         message: "Face Detected",
@@ -49,12 +53,14 @@ app.post("/face-detection", async (req, res) => {
         },
       });
     } else {
+      image.mv(pathUpload + "errors/" + fileName);
       res.status(404).json({
         success: false,
         message: "Face Undetected",
         data: null,
       });
     }
+    fs.unlinkSync(pathUpload + fileName, { force: true });
   } catch (e) {
     res.status(500).json({
       success: false,
