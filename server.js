@@ -8,6 +8,61 @@ const detectFaces = require("./face-detection");
 app.use(express.json());
 app.use(fileUpload());
 
+app.get("/tools-check", async (req, res) => {
+  let arrCheck = [];
+
+  fs.readdir("./upload/errors", (err, files) => {
+    files.forEach(async (file) => {
+      const pathUpload = __dirname + "/upload/errors/";
+      const moveUpload = __dirname + "/upload/result/";
+      const fileName = file;
+
+      if (file.split(".")[1] == "jpg" || file.split(".")[1] == 'jpeg') {
+        var result = await detectFaces(pathUpload, fileName);
+
+        if (result.length == 0) {
+          fs.rename(pathUpload + file, moveUpload + "NF-" + fileName, (err) => {
+            if (err) throw err;
+            console.log("Success Moved");
+          });
+        } else if (result.length == 1) {
+          fs.rename(
+            pathUpload + file,
+            moveUpload +
+              "SUCCESS-" +
+              result[0]._score.toFixed(3) +
+              "-" +
+              fileName,
+            (err) => {
+              if (err) throw err;
+
+              console.log("Success Moved");
+            }
+          );
+        } else {
+          fs.rename(
+            pathUpload + file,
+            moveUpload +
+              "MULTIPLE-" +
+              result[0]._score.toFixed(3) +
+              "-" +
+              result[1]._score.toFixed(3) +
+              "-" +
+              fileName,
+            (err) => {
+              if (err) throw err;
+
+              console.log("Success Moved");
+            }
+          );
+        }
+      }
+    });
+  });
+
+  res.json(arrCheck);
+});
+
 app.post("/face-detection", async (req, res) => {
   try {
     const { image } = req.files;
@@ -50,6 +105,7 @@ app.post("/face-detection", async (req, res) => {
         message: "Face Detected",
         data: {
           face_count: data.length,
+          data,
         },
       });
     } else {
