@@ -43,7 +43,7 @@ app.post("/face-detection", async (req, res) => {
 
     if (data.length > 0) {
       if (data.length > 1) {
-        image.mv(pathUpload + "errors/" + fileName);
+        image.mv(pathUpload + "errors/MULTI_" + fileName);
       }
       res.json({
         success: true,
@@ -53,7 +53,7 @@ app.post("/face-detection", async (req, res) => {
         },
       });
     } else {
-      image.mv(pathUpload + "errors/" + fileName);
+      image.mv(pathUpload + "errors/NOFACE_" + fileName);
       res.status(404).json({
         success: false,
         message: "Face Undetected",
