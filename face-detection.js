@@ -4,7 +4,7 @@ const faceapi = require("@vladmandic/face-api"); // use this when face-api is in
 async function detectFaces(path, filename) {
   await faceapi.nets.ssdMobilenetv1.loadFromDisk("model"); // load models from a specific patch
   const options = new faceapi.SsdMobilenetv1Options({
-    minConfidence: 0.1,
+    minConfidence: 0.3,
     maxResults: 2,
   }); // set model options
   const buffer = fs.readFileSync(path + filename); // load jpg image as binary
