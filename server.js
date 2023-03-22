@@ -13,6 +13,7 @@ app.post("/face-detection", async (req, res) => {
   try {
     const { id } = req.body;
     const { image } = req.files;
+    const minConfidence = parseFloat(req.body.minConfidence ?? 0.3);
 
     // If no image submitted, exit
     if (!image) {
@@ -54,7 +55,7 @@ app.post("/face-detection", async (req, res) => {
     image.mv(pathUpload + fileName);
 
     // Face Detection Image
-    const data = await detectFaces(pathUpload, fileName);
+    const data = await detectFaces(pathUpload, fileName, minConfidence);
     fs.unlinkSync(`${pathUpload}${fileName}`, { force: true });
 
     if (data.length > 0) {

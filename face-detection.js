@@ -1,10 +1,11 @@
 const fs = require("fs");
 const faceapi = require("@vladmandic/face-api"); // use this when face-api is installed as module (majority of use cases)
+const logger = require("./logger");
 
-async function detectFaces(path, filename) {
+async function detectFaces(path, filename, minConfidence) {
   await faceapi.nets.ssdMobilenetv1.loadFromDisk("model"); // load models from a specific patch
   const options = new faceapi.SsdMobilenetv1Options({
-    minConfidence: 0.3,
+    minConfidence: minConfidence,
     maxResults: 2,
   }); // set model options
   const buffer = fs.readFileSync(path + filename); // load jpg image as binary
