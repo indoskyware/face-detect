@@ -10,6 +10,7 @@ app.use(fileUpload());
 
 app.post("/face-detection", async (req, res) => {
   try {
+    const { id } = req.body;
     const { image } = req.files;
 
     // If no image submitted, exit
@@ -35,15 +36,29 @@ app.post("/face-detection", async (req, res) => {
 
     // Uploading image
     const pathUpload = __dirname + "/upload/";
-    const fileName = uuidv4() + ".jpg";
+
+    let fileName;
+    if (id === undefined) {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      const hour = String(now.getHours()).padStart(2, "0");
+      const minute = String(now.getMinutes()).padStart(2, "0");
+
+      fileName = `${year}${month}${day}_${hour}${minute}_${uuidv4()}.jpg`;
+    } else {
+      fileName = `${id}_${uuidv4()}.jpg`;
+    }
     image.mv(pathUpload + fileName);
 
     // Face Detection Image
     const data = await detectFaces(pathUpload, fileName);
+    fs.unlinkSync(`${pathUpload}${fileName}`, { force: true });
 
     if (data.length > 0) {
       if (data.length > 1) {
-        image.mv(pathUpload + "errors/MULTI_" + fileName);
+        image.mv(`${pathUpload}errors/MULTI_${fileName}`);
       }
       res.json({
         success: true,
@@ -53,14 +68,13 @@ app.post("/face-detection", async (req, res) => {
         },
       });
     } else {
-      image.mv(pathUpload + "errors/NOFACE_" + fileName);
+      image.mv(`${pathUpload}errors/NOFACE_${fileName}`);
       res.status(404).json({
         success: false,
         message: "Face Undetected",
         data: null,
       });
     }
-    fs.unlinkSync(pathUpload + fileName, { force: true });
   } catch (e) {
     res.status(500).json({
       success: false,
