@@ -4,6 +4,7 @@ const fileUpload = require("express-fileupload");
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const detectFaces = require("./face-detection");
+const logger = require("./logger");
 
 app.use(express.json());
 app.use(fileUpload());
@@ -76,6 +77,7 @@ app.post("/face-detection", async (req, res) => {
       });
     }
   } catch (e) {
+    logger.error(e);
     res.status(500).json({
       success: false,
       message: `Internal Server Error: ${e}`,
