@@ -67,6 +67,7 @@ app.post("/face-detection", async (req, res) => {
         message: "Face Detected",
         data: {
           face_count: data.length,
+          score: data.length > 0 ? data[0]._score : 0,
         },
       });
     } else {
@@ -75,6 +76,7 @@ app.post("/face-detection", async (req, res) => {
         success: false,
         message: "Face Undetected",
         data: null,
+        score: 0,
       });
     }
   } catch (e) {
