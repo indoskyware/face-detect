@@ -56,7 +56,9 @@ app.post("/face-detection", async (req, res) => {
     }
     await image.mv(pathUpload + fileName + ext);
 
-    const metadata = await sharp(pathUpload + fileName + ext).metadata();
+    const metadata = await sharp(pathUpload + fileName + ext, {
+      failOn: "error",
+    }).metadata();
 
     // Check if the image width is greater than the height
     if (metadata.width > metadata.height) {
